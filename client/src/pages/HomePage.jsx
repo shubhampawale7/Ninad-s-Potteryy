@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // client/src/App.jsx
 import React, { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
