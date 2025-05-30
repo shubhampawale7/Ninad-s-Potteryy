@@ -3,8 +3,12 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js"; // Import user routes
-
+import userRoutes from "./routes/userRoutes.js";
+import productRoutes from "./routes/productRoutes.js"; // Import product routes
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js"; // NEW
 // Load environment variables
 dotenv.config();
 
@@ -14,19 +18,27 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(express.json()); // Allows parsing JSON body
-app.use(cors()); // Enable CORS
+app.use(express.json());
+app.use(cors());
 
 // Basic test route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Use User Routes
-app.use("/api/users", userRoutes); // All user related routes start with /api/users
+// Use Routes
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
 
-// Define the port
 const PORT = process.env.PORT || 5000;
+
+// Error handling middleware
+
+app.use(notFound);
+app.use(errorHandler);
 
 // Start the server
 app.listen(PORT, () => {

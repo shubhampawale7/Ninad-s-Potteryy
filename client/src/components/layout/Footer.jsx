@@ -1,6 +1,7 @@
 // client/src/components/layout/Footer.jsx
 import React from "react";
 import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (

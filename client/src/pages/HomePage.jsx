@@ -1,125 +1,137 @@
-/* eslint-disable no-unused-vars */
-// client/src/App.jsx
-import React, { useContext } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner"; // Only Toaster here, toast is imported where needed
+// client/src/pages/HomePage.jsx (updated again)
+import React, { useContext, useEffect, useRef } from "react"; // Import useRef
+import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import { gsap } from "gsap"; // Import GSAP
+import { Helmet } from "react-helmet-async";
+function HomePage() {
+  const { state } = useContext(AuthContext);
 
-// Import your pages
-import HomePage from "./pages/HomePage";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
+  // Refs for GSAP animation targets
+  const titleRef = useRef(null);
+  const taglineRef = useRef(null);
+  const buttonRef = useRef(null);
 
-// Import Layout/Common Components (we will create these soon)
-import Header from "./components/layout/Header"; // Placeholder
-import Footer from "./components/layout/Footer"; // Placeholder
+  useEffect(() => {
+    // GSAP animation for hero section elements
+    gsap.fromTo(
+      titleRef.current,
+      { opacity: 0, y: -50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.3 }
+    );
+    gsap.fromTo(
+      taglineRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.6 }
+    );
+    gsap.fromTo(
+      buttonRef.current,
+      { opacity: 0, scale: 0.8 },
+      { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.7)", delay: 0.9 }
+    );
+  }, []); // Empty dependency array means this runs once on mount
 
-// Import AuthContext for potential use in Header or protected routes
-import { AuthContext } from "./context/AuthContext";
+  // Framer Motion variants (can still be used for other elements or fallback)
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
 
-// Import middleware for routes
-import ProtectedRoute from "./components/routes/ProtectedRoute"; // We'll create this next
-import AdminRoute from "./components/routes/AdminRoute"; // We'll create this next
-
-function App() {
-  // You might use AuthContext here if the Header/Footer need to react to login state
-  // const { state } = useContext(AuthContext);
+  const buttonVariants = {
+    hover: { scale: 1.05, transition: { duration: 0.2 } },
+    tap: { scale: 0.95 },
+  };
 
   return (
-    <Router>
-      {/* Sonner Toaster component - renders notifications */}
-      <Toaster richColors position="top-right" />
-
-      {/* Optional: Add a Header component that appears on all pages */}
-      <Header />
-
-      <main className="flex-grow">
+    <motion.div
+      className="min-h-[calc(100vh-120px)] bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 flex flex-col items-center justify-center p-8 text-center"
+      // Removed Framer Motion animation for the main container to let GSAP handle specific elements
+      // variants={containerVariants}
+      // initial="hidden"
+      // animate="visible"
+    >
+      <Helmet>
+        <title>Ninad's Pottery - Handcrafted Ceramics & Home Decor</title>
+        <meta
+          name="description"
+          content="Discover exquisite handcrafted pottery, ceramics, and unique home decor pieces from Ninad's Pottery. Shop online for artisanal quality."
+        />
+        {/* Open Graph / Social Media Tags (for sharing) */}
+        <meta
+          property="og:title"
+          content="Ninad's Pottery - Handcrafted Ceramics & Home Decor"
+        />
+        <meta
+          property="og:description"
+          content="Discover exquisite handcrafted pottery, ceramics, and unique home decor pieces from Ninad's Pottery. Shop online for artisanal quality."
+        />
+        <meta
+          property="og:image"
+          content="https://yourwebsite.com/images/ninads-pottery-og-image.jpg"
+        />{" "}
+        {/* Replace with actual image */}
+        <meta property="og:url" content="https://yourwebsite.com/" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <h1
+        ref={titleRef} // Attach ref for GSAP
+        className="text-6xl font-extrabold text-indigo-700 mb-6 opacity-0" // Start hidden for GSAP
+      >
+        Welcome to Ninad's Pottery!
+      </h1>
+      <p
+        ref={taglineRef} // Attach ref for GSAP
+        className="text-xl text-gray-600 max-w-2xl mb-8 opacity-0" // Start hidden for GSAP
+      >
+        Discover exquisite handcrafted pottery, designed to bring beauty and
+        artistry to your home.
+      </p>
+      <div ref={buttonRef} className="opacity-0">
         {" "}
-        {/* Flex-grow to push footer down */}
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/about"
-            element={<div>About Page Placeholder</div>}
-          />{" "}
-          {/* Placeholder */}
-          <Route
-            path="/contact"
-            element={<div>Contact Page Placeholder</div>}
-          />{" "}
-          {/* Placeholder */}
-          <Route path="/shop" element={<div>Shop Page Placeholder</div>} />{" "}
-          {/* Placeholder */}
-          {/* Protected User Routes (accessible only if logged in) */}
-          {/* Example: A user profile page */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute component={<div>User Profile Placeholder</div>} />
-            }
-          />
-          {/* Other protected routes like /cart, /checkout, /orders */}
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute component={<div>Cart Page Placeholder</div>} />
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute
-                component={<div>Checkout Page Placeholder</div>}
-              />
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute
-                component={<div>My Orders Page Placeholder</div>}
-              />
-            }
-          />
-          {/* Protected Admin Routes (accessible only if logged in AND role is 'admin') */}
-          {/* Example: Admin Dashboard */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute component={<div>Admin Dashboard Placeholder</div>} />
-            }
-          />
-          {/* Other admin routes for product management, user management etc. */}
-          <Route
-            path="/admin/products"
-            element={
-              <AdminRoute component={<div>Admin Product Management</div>} />
-            }
-          />
-          <Route
-            path="/admin/orders"
-            element={
-              <AdminRoute component={<div>Admin Order Management</div>} />
-            }
-          />
-          {/* Catch-all for 404 Not Found */}
-          <Route
-            path="*"
-            element={
-              <div className="min-h-[calc(100vh-120px)] flex items-center justify-center text-4xl text-red-500 font-bold">
-                404 - Page Not Found
-              </div>
-            }
-          />
-        </Routes>
-      </main>
+        {/* Attach ref and start hidden */}
+        <Link to="/shop">
+          <motion.button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transition-all duration-300"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+          >
+            Explore Our Shop
+          </motion.button>
+        </Link>
+      </div>
 
-      {/* Optional: Add a Footer component that appears on all pages */}
-      <Footer />
-    </Router>
+      {/* Display user info if logged in (for testing purposes) */}
+      {state.user && state.user.token && (
+        <motion.div
+          className="mt-8 p-4 bg-gray-200 rounded-lg max-w-md break-all border border-gray-300"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.6 }} // Adjust delay to fit GSAP animation
+        >
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            Your JWT (for testing):
+          </h3>
+          <p className="text-sm text-gray-600">{state.user.token}</p>
+          <p className="text-xs text-gray-500 mt-2">
+            (You can use this token in tools like Postman/Insomnia to test
+            protected backend routes by setting an Authorization header with
+            `Bearer YOUR_TOKEN`.)
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            Your Role:{" "}
+            <span className="font-bold text-blue-700">{state.user.role}</span>
+          </p>
+        </motion.div>
+      )}
+    </motion.div>
   );
 }
 
-export default App;
+export default HomePage;
